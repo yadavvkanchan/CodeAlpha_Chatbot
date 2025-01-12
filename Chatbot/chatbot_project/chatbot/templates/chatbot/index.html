@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Chatbot interaction for quick help and guidance." />
+    <meta name="keywords" content="chatbot, AI, help, assistant, customer service" />
+    <meta name="author" content="Your Name or Organization" />
+    <meta property="og:title" content="Chatbot" />
+    <meta property="og:description" content="Chat with our AI-powered chatbot for instant help." />
+    <meta property="og:image" content="https://png.pngtree.com/png-vector/20220611/ourmid/pngtree-chatbot-icon-chat-bot-robot-png-image_4841963.png" />
+    <meta property="og:url" content="http://yourwebsite.com/chatbot" />
+    <title>Chatbot</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Global styles */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+        background-color: #f9f9f9;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        background-color: aliceblue;
+        justify-content: center;
+        align-items: center;
+        height: 70px;
+      }
+
+      nav ul li {
+        margin: 5px;
+        padding: 5px;
+        font-size: xx-large;
+      }
+
+      nav ul li img {
+        height: 50px;
+        width: auto;
+      }
+
+      .container {
+        background-image: url(http://www.psdgraphics.com/file/2018/bright-light-rays-background.jpg);
+        background-size: cover;
+        background-position: center;
+        padding: 20px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #chatbox {
+        width: 100%;
+        height: 400px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #fff;
+        border-radius: 8px;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        line-height: 1.5;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        resize: vertical;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+        margin-bottom: 10px;
+      }
+
+      textarea:focus {
+        border-color: #4CAF50;
+        outline: none;
+      }
+
+      textarea::placeholder {
+        color: #888;
+        font-style: italic;
+      }
+
+      .user-message,
+      .bot-message {
+        margin: 5px;
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      .user-message {
+        background-color: #f0f0f0;
+        text-align: right;
+      }
+
+      .bot-message {
+        background-color: #d0f7c3;
+        text-align: left;
+      }
+
+      .attractive-button {
+        padding: 15px 30px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #6200ea;
+        border: 2px solid #6200ea;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+        text-transform: uppercase;
+        display: inline-block;
+      }
+
+      .attractive-button:hover {
+        background-color: #3700b3;
+        border-color: #3700b3;
+        transform: scale(1.1);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .attractive-button:active {
+        background-color: #6200ea;
+        border-color: #6200ea;
+        transform: scale(0.98);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Responsive design for small screens */
+      @media (max-width: 768px) {
+        nav ul {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        #chatbox {
+          height: 300px;
+        }
+
+        .container {
+          max-width: 100%;
+          padding: 10px;
+        }
+
+        textarea {
+          font-size: 14px;
+        }
+
+        .attractive-button {
+          padding: 12px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <img
+              src="https://png.pngtree.com/png-vector/20220611/ourmid/pngtree-chatbot-icon-chat-bot-robot-png-image_4841963.png"
+              alt="Chatbot Icon"
+            />
+          </li>
+          <li><b>CHATBOT</b></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <div class="container">
+        <section id="chatbox"></section>
+        <textarea
+          id="user_input"
+          placeholder="Type a message..."
+          rows="3"
+        ></textarea><br />
+        <button class="attractive-button" onclick="sendMessage()">Send</button>
+      </div>
+    </main>
+
+    <script>
+      function sendMessage() {
+        var user_input = document.getElementById("user_input").value;
+
+        if (user_input.trim() !== "") {
+          var chatbox = document.getElementById("chatbox");
+          chatbox.innerHTML += "<div class='user-message'>" + user_input + "</div>";
+
+          fetch("/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}", 
+            },
+            body: JSON.stringify({ user_input: user_input }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.response) {
+                chatbox.innerHTML += "<div class='bot-message'>" + data.response + "</div>";
+              } else {
+                chatbox.innerHTML += "<div class='bot-message'>Sorry, I didn't understand that.</div>";
+              }
+
+              document.getElementById("user_input").value = "";
+              chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      }
+    </script>
+  </body>
+</html>
